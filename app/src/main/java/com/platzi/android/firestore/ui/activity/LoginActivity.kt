@@ -95,10 +95,13 @@ class LoginActivity : AppCompatActivity() {
             firestoreService.findUserById(usuarioCapturado, object : Callback<User> {
                   override fun onSuccess(result: User?) { //Si se pudo conectar con FiBa retorna un objeto User() aunque pudiera venir vacio
                       if(result==null){  //si viene vacio significa que no existe y entonces lo va crear
-                              showSimpleMessage(view, "El usuario no existe en la coleccion")
+
                           /**1. Instancia un nuevo User()*/
                           /**2. Asigna la unica propiedad obligatoria que es el nombre*/
-
+                          /**3. Invoca a la fun que agrega usuarios a la collecion en FaBi*/
+                          val newUser = User()
+                          newUser.username= usuarioCapturado
+                          saveDocumentInColeccionUsers(newUser, view)
 
                       } else{
                               showSimpleMessage(view, "El usuario SI existe")
