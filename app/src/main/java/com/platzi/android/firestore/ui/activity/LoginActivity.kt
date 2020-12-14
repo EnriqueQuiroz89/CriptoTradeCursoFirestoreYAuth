@@ -24,7 +24,7 @@ import java.lang.Exception
  * 1/29/19.
  */
 
-/**Por que se creo fuera de la clase*/
+/**Pasa como parametro al crear un nuevo documento en una collecion*/
 const val USERNAME_KEY = "username_key"
 
 class LoginActivity : AppCompatActivity() {
@@ -78,26 +78,67 @@ class LoginActivity : AppCompatActivity() {
     }
 */
 
+
     /**Creando el metodo alternativo para crear el usuario en FirebaseAuth*/
     fun onStartClicked(view: View){
-
         /**Invocando al metodo de autenticacion*/
         // si logra loguearse de forma anonima en firebase
         auth.signInAnonymously().addOnCompleteListener{
             //ejecuta la siguiente tarea
             task -> if(task.isSuccessful){  //Si la tarea es exitosa
-                /**Muestra un SnackBAr*/
-            Snackbar.make(view, getString(R.string.simple_click_on_start), Snackbar.LENGTH_LONG)
-                .setAction("Info", null).show()
-                                          }
+            /**Mediante un metodo de FirestoreService determina si el usuario ingresado ya existe o no */
+            /**Si no existe devuelve un objeto User para que otro metod lo cree*/
+            /**Si existe devuelve solo el nombre del usuario*/
+         //Capturo el texto escrito en una variable y lo paso al metodo
+             val usuarioCapturado = usernameEt.text.toString()
+
+            firestoreService.findUserById(usuarioCapturado, object : Callback<User> {
+                  override fun onSuccess(result: User?) { //Si se pudo conectar con FiBa retorna un objeto User() aunque pudiera venir vacio
+                      if(result==null){  //si viene vacio significa que no existe y entonces lo va crear
+                              showSimpleMessage(view, "El usuario no existe en la coleccion")
+                          /**1. Instancia un nuevo User()*/
+                          /**2. Asigna la unica propiedad obligatoria que es el nombre*/
+
+
+                      } else{
+                              showSimpleMessage(view, "El usuario SI existe")
+                            }
+                                                       }  //fin de onSuccess
+
+                  override fun onFailed(exception: Exception) {
+                          showErrorMessage(view)
+                                                              } //fin del onFailed
+              })
+            }   /**  fin de    if(task.isSuccessful)*/
             else{ //si la tarea no es exitosa
             showErrorMessage(view)
                 }
+                                                     }
+                                    }// Fin de onStartClick
+
+    /**Con el texto ingresado en la caja de texto creara un nuevo documento en la colleccion*/
+    fun saveDocumentInColeccionUsers(user: User, view: View){
+        /**Paso 1. Instancio el metodo que me permite crear un nuevo documento en una coleccion */
+                                   /**data: Any  //Envia las propiedades del nuevo documento a crear
+                                          *,collectionName: String,  //le indica al metodo a que coleccion agregar el documento
+                                                                 *  id: String  //usa el texto escrito en la pantalla para generar un id
+                                                                                * Entre las llaves del Callback<> indicas que tipo de objeto va a devolver*/
+        firestoreService.setDocument(user, USERS_COLLECTION_NAME, user.username, object : Callback<Void> {
+           /**Toodo esto va dentro de un callback*/
+              override fun onSuccess(result: Void?) {
+                Snackbar.make(view, getString(R.string.nuevo_documento_creado), Snackbar.LENGTH_LONG)
+                    .setAction("Info", null).show()
+            }
+
+             override fun onFailed(exception: Exception) {
+                showErrorMessage(view)
+                Log.e(TAG, "error", exception)
+            }
+                            })//fin del callback y del metodo
+
 
         }
 
-
-    }
 
 /**Guarda el usuario en Firestore e inicia la nueva actividad o bien muestra el error*/
     private fun saveUserAndStartMainActivity(user: User, view: View) {
@@ -122,8 +163,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
+    /**Muestra un simple mennsaje donde se le invoca*/
+    private fun showSimpleMessage(view: View, mensaje: String) {
+        /**El snackbar necesita una vista por que requiere saber donde se va a mostrar*/
+        Snackbar.make(view, mensaje, Snackbar.LENGTH_LONG)
+            .setAction("Info", null).show()
+    }
 
-      /**Inicia la actividad y transporta  el nombre que se introdujo en el EditText */
+
+
+    /**Inicia la actividad y transporta  el nombre que se introdujo en el EditText */
     private fun startMainActivity(username: String) {
         val intent = Intent(this@LoginActivity, TraderActivity::class.java)
         intent.putExtra(USERNAME_KEY, username)

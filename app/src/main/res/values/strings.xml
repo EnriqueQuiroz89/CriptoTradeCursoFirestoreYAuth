@@ -12,5 +12,8 @@
     <string name="coin_icon">Coin icon</string>
     <string name="error_while_connecting_to_the_server">Error while connecting to the server</string>
     <string name="simple_click_on_start">Probando que funciona el click</string>
+    <string name="usuario_anonimo_creado">Has creado un nuevo usuario anonimo en Firebase</string>
+    <string name="nuevo_documento_creado">El usuario no existia pero ya se creo y agrego en la coleccion</string>
+    <string name="documento_ya_existe">El usuario ya existia en la coleccion, no se creo un nuevo doc</string>
     <string name="username">username</string>
 </resources>

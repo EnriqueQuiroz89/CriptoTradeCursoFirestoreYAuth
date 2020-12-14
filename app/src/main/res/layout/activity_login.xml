@@ -34,7 +34,7 @@
             app:srcCompat="@drawable/ic_coin"/>
 
     <EditText
-            android:id="@+id/username"
+            android:id="@+id/usernameEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
