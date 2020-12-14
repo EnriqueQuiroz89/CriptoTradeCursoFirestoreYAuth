@@ -50,11 +50,11 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val username = username.text.toString()
                     firestoreService.findUserById(username, object : Callback<User> {
-
+                      /**Hay que habilitar en la consolo la opcion de autneticacion anonima*/
                         override fun onSuccess(result: User?) {
                             if (result == null) {
                                 val user = User()
-                                user.username = username
+                                user.username = textView.text.toString()
                                 saveUserAndStartMainActivity(user, view)
                             } else
                                 startMainActivity(username)
