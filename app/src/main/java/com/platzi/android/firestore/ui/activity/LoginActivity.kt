@@ -24,25 +24,27 @@ import java.lang.Exception
  * 1/29/19.
  */
 
-
+/**Por que se creo fuera de la clase*/
 const val USERNAME_KEY = "username_key"
 
 class LoginActivity : AppCompatActivity() {
 
 
     private val TAG = "LoginActivity"
-
+   /**Instancia para utilizar autenticacion FirebaseAuth*/
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    /**Crea una instancia para consumir FirestoreServices*/
     lateinit var firestoreService: FirestoreService
 
+    /**Codigo que se ejecuta al iniciar la aplicacion*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
     }
 
-
+/**  Este metodo da la funcion al click
     fun onStartClicked(view: View) {
         view.isEnabled = false
         auth.signInAnonymously()
@@ -74,7 +76,16 @@ class LoginActivity : AppCompatActivity() {
             }
 
     }
+*/
 
+    /**Creando el metodo alternativo para crear el usuario en FirebaseAuth*/
+    fun onStartClicked(view: View){
+        Snackbar.make(view, getString(R.string.error_while_connecting_to_the_server), Snackbar.LENGTH_LONG)
+            .setAction("Info", null).show()
+
+    }
+
+/**Guarda el usuario en Firestore e inicia la nueva actividad o bien muestra el error*/
     private fun saveUserAndStartMainActivity(user: User, view: View) {
         firestoreService.setDocument(user, USERS_COLLECTION_NAME, user.username, object : Callback<Void> {
             override fun onSuccess(result: Void?) {
@@ -89,12 +100,14 @@ class LoginActivity : AppCompatActivity() {
 
         })
     }
-
+   /**Es llamado cuando el usuario no se pudo agregar a la coleccion de usuarios*/
     private fun showErrorMessage(view: View) {
+       /**El snackbar necesita una vista por que requiere saber donde se va a mostrar*/
         Snackbar.make(view, getString(R.string.error_while_connecting_to_the_server), Snackbar.LENGTH_LONG)
             .setAction("Info", null).show()
     }
 
+      /**Inicia la actividad y transporta  el nombre que se introdujo en el EditText */
     private fun startMainActivity(username: String) {
         val intent = Intent(this@LoginActivity, TraderActivity::class.java)
         intent.putExtra(USERNAME_KEY, username)
