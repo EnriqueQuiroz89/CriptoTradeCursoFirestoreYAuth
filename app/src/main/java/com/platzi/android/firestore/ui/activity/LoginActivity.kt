@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
     }
 
-/**  Este metodo da la funcion al click
+/** METODO Original Este metodo da la funcion al click
     fun onStartClicked(view: View) {
         view.isEnabled = false
         auth.signInAnonymously()

@@ -6,7 +6,9 @@ import java.lang.Exception
  * @author Santiago Carrillo
  * 3/7/19.
  */
-interface Callback<T> {
+
+/**Nos notifica si la operacion es exitosa o no*/
+interface Callback<T> {  // Tipo generico de Java que nos permite mapear cualquier tipo de objeto
 
     fun onSuccess(result: T?)
 

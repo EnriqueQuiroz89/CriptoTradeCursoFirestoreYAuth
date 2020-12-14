@@ -9,16 +9,23 @@ import com.platzi.android.firestore.model.User
  * @author Santiago Carrillo
  * 3/7/19.
  */
-
+/**Facilitan el acceso a las colecciones*/
 const val CRYPTO_COLLECTION_NAME = "cryptos"
 const val USERS_COLLECTION_NAME = "users"
 
 
 class FirestoreService(val firebaseFirestore: FirebaseFirestore) {
 
+       /**Puede agregar cualquier tipo de documento en Firestore*/
+                   /**de tipo Any para enviar cualquier tipo de datos*/
+                              /**El nombre de la coleccion*/
+                                                      /**identificador que le asignemos al documento*/
+                                                                  /**El callback es de tipo Void ya que no regresara objeto*/
     fun setDocument(data: Any, collectionName: String, id: String, callback: Callback<Void>) {
         firebaseFirestore.collection(collectionName).document(id).set(data)
-            .addOnSuccessListener { callback.onSuccess(null) }
+            /**Los listener son opcionales pero recomndables para evitar el crash*/
+            .addOnSuccessListener { callback.onSuccess(null) } //devuelve null ya el callback retorna un void
+                /**A la 'exception->' les llama arrow functiona*/
             .addOnFailureListener { exception -> callback.onFailed(exception) }
     }
 
