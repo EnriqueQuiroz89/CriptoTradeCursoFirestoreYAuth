@@ -44,11 +44,7 @@ class LoginActivity : AppCompatActivity() {
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
     }
 
-<<<<<<< HEAD
-/** METODO Original Este metodo da la funcion al click
-=======
 /**  METODO ORIGINAL Este metodo da la funcion al click
->>>>>>> pasarTradeConsole
     fun onStartClicked(view: View) {
         view.isEnabled = false
         auth.signInAnonymously()
