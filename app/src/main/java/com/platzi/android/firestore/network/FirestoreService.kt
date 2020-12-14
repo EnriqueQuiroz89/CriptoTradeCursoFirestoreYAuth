@@ -9,7 +9,11 @@ import com.platzi.android.firestore.model.User
  * @author Santiago Carrillo
  * 3/7/19.
  */
+<<<<<<< HEAD
 /**Facilitan el acceso a las colecciones*/
+=======
+/**Facilitan el llamado de colecciones en el codigo*/
+>>>>>>> pasarTradeConsole
 const val CRYPTO_COLLECTION_NAME = "cryptos"
 const val USERS_COLLECTION_NAME = "users"
 
