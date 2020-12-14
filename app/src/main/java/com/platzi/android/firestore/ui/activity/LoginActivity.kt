@@ -80,8 +80,22 @@ class LoginActivity : AppCompatActivity() {
 
     /**Creando el metodo alternativo para crear el usuario en FirebaseAuth*/
     fun onStartClicked(view: View){
-        Snackbar.make(view, getString(R.string.error_while_connecting_to_the_server), Snackbar.LENGTH_LONG)
-            .setAction("Info", null).show()
+
+        /**Invocando al metodo de autenticacion*/
+        // si logra loguearse de forma anonima en firebase
+        auth.signInAnonymously().addOnCompleteListener{
+            //ejecuta la siguiente tarea
+            task -> if(task.isSuccessful){  //Si la tarea es exitosa
+                /**Muestra un SnackBAr*/
+            Snackbar.make(view, getString(R.string.simple_click_on_start), Snackbar.LENGTH_LONG)
+                .setAction("Info", null).show()
+                                          }
+            else{ //si la tarea no es exitosa
+            showErrorMessage(view)
+                }
+
+        }
+
 
     }
 
@@ -106,6 +120,8 @@ class LoginActivity : AppCompatActivity() {
         Snackbar.make(view, getString(R.string.error_while_connecting_to_the_server), Snackbar.LENGTH_LONG)
             .setAction("Info", null).show()
     }
+
+
 
       /**Inicia la actividad y transporta  el nombre que se introdujo en el EditText */
     private fun startMainActivity(username: String) {
