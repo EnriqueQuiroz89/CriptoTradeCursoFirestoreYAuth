@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
     }
 
-/**  Este metodo da la funcion al click
+/**  METODO ORIGINAL Este metodo da la funcion al click
     fun onStartClicked(view: View) {
         view.isEnabled = false
         auth.signInAnonymously()
@@ -156,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-/**Guarda el usuario en Firestore e inicia la nueva actividad o bien muestra el error*/
+/**METODO ORIGINAL    Guarda el usuario en Firestore e inicia la nueva actividad o bien muestra el error
     private fun saveUserAndStartMainActivity(user: User, view: View) {
         firestoreService.setDocument(user, USERS_COLLECTION_NAME, user.username, object : Callback<Void> {
             override fun onSuccess(result: Void?) {
@@ -170,8 +170,10 @@ class LoginActivity : AppCompatActivity() {
             }
 
         })
-    }
-   /**Es llamado cuando el usuario no se pudo agregar a la coleccion de usuarios*/
+    }*/
+
+
+    /**Es llamado cuando el usuario no se pudo agregar a la coleccion de usuarios*/
     private fun showErrorMessage(view: View) {
        /**El snackbar necesita una vista por que requiere saber donde se va a mostrar*/
         Snackbar.make(view, getString(R.string.error_while_connecting_to_the_server), Snackbar.LENGTH_LONG)
