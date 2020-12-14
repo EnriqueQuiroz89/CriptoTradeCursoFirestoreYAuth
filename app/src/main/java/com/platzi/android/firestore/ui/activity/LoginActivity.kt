@@ -44,7 +44,11 @@ class LoginActivity : AppCompatActivity() {
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
     }
 
+<<<<<<< HEAD
 /** METODO Original Este metodo da la funcion al click
+=======
+/**  METODO ORIGINAL Este metodo da la funcion al click
+>>>>>>> pasarTradeConsole
     fun onStartClicked(view: View) {
         view.isEnabled = false
         auth.signInAnonymously()
@@ -95,16 +99,29 @@ class LoginActivity : AppCompatActivity() {
             firestoreService.findUserById(usuarioCapturado, object : Callback<User> {
                   override fun onSuccess(result: User?) { //Si se pudo conectar con FiBa retorna un objeto User() aunque pudiera venir vacio
                       if(result==null){  //si viene vacio significa que no existe y entonces lo va crear
-
+                        //Parte1
                           /**1. Instancia un nuevo User()*/
                           /**2. Asigna la unica propiedad obligatoria que es el nombre*/
                           /**3. Invoca a la fun que agrega usuarios a la collecion en FaBi*/
                           val newUser = User()
                           newUser.username= usuarioCapturado
-                          saveDocumentInColeccionUsers(newUser, view)
-
-                      } else{
-                              showSimpleMessage(view, "El usuario SI existe")
+                          saveDocumentInColeccionUsers(newUser, view)  //El mensaje viene de la fun
+                        //Parte2 si el usuario Fue creado con exito avanzo a la 2da actividad
+                          /**1. Valido mediante un callback si se creo con exito el documento en la coleccion*/
+                          /**2. Si fue verdadero inicio la segunda actividad pasando como parametro el username */
+                          /**3. Invoca a la fun que agrega usuarios a la collecion en FaBi*/
+                          val userCreated= true // validad con call back
+                          if(userCreated){  startMainActivity(newUser.username) }
+                                      } // fin del if
+                         else{ //si result no es nulo entonces el usuario si existe
+                         // showSimpleMessage(view, "El usuario SI existe")
+                          //Parte1
+                          /**1. El result es un objeto User()*/
+                          /**2. De este objeto extraigo el username que requiero para pasar a la siguinete actividad*/
+                          /**3. Invoco a la fun y le paso como parametro el username**/
+                          val oldUser = result!!
+                          val userName = oldUser.username
+                           startMainActivity(userName)
                             }
                                                        }  //fin de onSuccess
 
@@ -143,7 +160,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-/**Guarda el usuario en Firestore e inicia la nueva actividad o bien muestra el error*/
+/**METODO ORIGINAL    Guarda el usuario en Firestore e inicia la nueva actividad o bien muestra el error
     private fun saveUserAndStartMainActivity(user: User, view: View) {
         firestoreService.setDocument(user, USERS_COLLECTION_NAME, user.username, object : Callback<Void> {
             override fun onSuccess(result: Void?) {
@@ -157,8 +174,10 @@ class LoginActivity : AppCompatActivity() {
             }
 
         })
-    }
-   /**Es llamado cuando el usuario no se pudo agregar a la coleccion de usuarios*/
+    }*/
+
+
+    /**Es llamado cuando el usuario no se pudo agregar a la coleccion de usuarios*/
     private fun showErrorMessage(view: View) {
        /**El snackbar necesita una vista por que requiere saber donde se va a mostrar*/
         Snackbar.make(view, getString(R.string.error_while_connecting_to_the_server), Snackbar.LENGTH_LONG)
