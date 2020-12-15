@@ -49,7 +49,6 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
 
         configureRecyclerView()
         loadCryptos()
-
         fab.setOnClickListener { view ->
             Snackbar.make(view, getString(R.string.generating_new_cryptos), Snackbar.LENGTH_SHORT)
                 .setAction("Info", null).show()
