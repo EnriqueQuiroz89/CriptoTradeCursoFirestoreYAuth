@@ -41,7 +41,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        /**Instanciamoes este componente
+         * Para poder ocupar esta instancia en otros metodos*/
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
+
     }
 
 /**  METODO ORIGINAL Este metodo da la funcion al click
@@ -85,8 +88,9 @@ class LoginActivity : AppCompatActivity() {
         // si logra loguearse de forma anonima en firebase
         auth.signInAnonymously().addOnCompleteListener{
             //ejecuta la siguiente tarea
-            task -> if(task.isSuccessful){  //Si la tarea es exitosa
-            /**Mediante un metodo de FirestoreService determina si el usuario ingresado ya existe o no */
+            task ->
+                  if(task.isSuccessful){  //Si la tarea es exitosa
+            /**Mediante findUserById determina si el usuario ingresado ya existe o no */
             /**Si no existe devuelve un objeto User para que otro metod lo cree*/
             /**Si existe devuelve solo el nombre del usuario*/
          //Capturo el texto escrito en una variable y lo paso al metodo

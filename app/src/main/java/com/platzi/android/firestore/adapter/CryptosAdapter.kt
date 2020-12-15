@@ -17,26 +17,30 @@ import com.squareup.picasso.Picasso
 
 
 class CryptosAdapter(val cryptosAdapterListener: CryptosAdapterListener) :
+                           /**ViewHolder es un patron de diseño de datos */
     RecyclerView.Adapter<CryptosAdapter.ViewHolder>() {
-
 
     var cryptoList: List<Crypto> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.crypto_row, parent, false)
+        val view = LayoutInflater.from(parent.context)
+                          .inflate(R.layout.crypto_row,
+                                   parent,
+                                false) /**Para no agregarlo a la raiza*/
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return cryptoList.size
     }
-
+/**Hace la actualizacion de cada uno de los valores de la lista de Criptos */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val crypto = cryptoList[position]
 
         Picasso.get().load(crypto.imageUrl).into(holder.image)
         holder.name.text = crypto.name
         holder.available.text = holder.itemView.context.getString(R.string.available_message, crypto.available.toString())
+        //holder.available.text = "10"
         holder.buyButton.setOnClickListener {
 
             cryptosAdapterListener.onBuyCryptoClicked(crypto)

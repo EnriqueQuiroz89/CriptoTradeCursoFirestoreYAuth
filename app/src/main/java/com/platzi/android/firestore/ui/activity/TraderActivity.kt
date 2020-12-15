@@ -28,7 +28,7 @@ import java.lang.Exception
  */
 class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
 
-    lateinit var firestoreService: FirestoreService
+    lateinit var firestoreService: FirestoreService  /**Para consumir los servicios de firebase*/
 
     private val cryptosAdapter: CryptosAdapter = CryptosAdapter(this)
 
@@ -99,10 +99,9 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
                 this@TraderActivity.runOnUiThread {
                     cryptosAdapter.cryptoList = cryptoList!!
                     cryptosAdapter.notifyDataSetChanged()
+                                                  }
 
-                }
-
-            }
+                                             } /**Fin del on success*/
 
             override fun onFailed(exception: Exception) {
                 Log.e("TraderActivity", "error loading criptos", exception)
