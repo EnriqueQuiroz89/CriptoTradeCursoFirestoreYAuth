@@ -77,19 +77,19 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
               /**Usa el metodo para obtener al documento usuario en formato User() mediante el username que es el id*/
               firestoreService.findUserById(username!!, object : Callback<User> {
                     override fun onSuccess(result: User?) {  /**Si exito ocupa el User? devuelto en forma de result */
-                        user = result  /**Asigna el result a una variable de clase user */
+                        user = result  /**Asigna el result a una variable GLOBAL user */
 
+                        /**Tiene lista de Criptomonedas??*/
                         if (user!!.cryptosList == null) {    /**Si la lista de monedas del usuario esta vacia*/
-                            /**Crea una cartea vacia de cryptomonedas*/
+                            /**Crea una cartera vacia de cryptomonedas*/
                              val userCryptoList = mutableListOf<Crypto>()
-
                             /**Mediante una for se recorre la coleccion de Criptos que retorno el callback de getCryptos
                              * y se agrega en cada iteracion una moneda a la lista  */
                             for (crypto in resultCryptoList!!) { /***/
                                /***Crea un objeto Crypto para asignarle las propiedades
                                 * de una criptomoneda ya existente*/
                                 val cryptoUser = Crypto()
-                                /**Agrega sus propiedades*/
+                                /**Setear cada uno de los valores*/
                                 cryptoUser.name = crypto.name
                                 cryptoUser.available = crypto.available.toInt()
                                 cryptoUser.imageUrl = crypto.imageUrl
@@ -100,14 +100,15 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
                             /**Asigna la cartera recien llenada a la cartera vacia del Usuario */
                             user!!.cryptosList = userCryptoList
 
-                            /**Actualiza al usuario pasando como parametro el User() al que
-                             * recien se le asigno una cartera llena*/
-                            firestoreService.updateUser(user!!, null)
+                            /**Finalmente actualizamos la data al servidor de la siguiente forma*/
+                            firestoreService.updateUser(user!!, null)   //No voy a hacer nada cuando esta oeracion termine
                             /**Enviamos un usuario y nos devuleve el usuario actualizado*/
                         }
-                        /**Lo anterior solo sirvio para crear carteras nuevas a usuarios nuevos
-                         * Pero este metodo carga todas las carteras nuevas y no nuevas*/
-                        loadUserCryptos()
+                        /**Lo anterior solo sirvio para crear carteras nuevas a usuarios nuevos*/
+
+                        loadUserCryptos()  /*** Este metddo carga la lista al panel de informacion */
+
+
                         addRealtimeDatabaseListeners(user!!, resultCryptoList!!)
 
                     }   /**Fin del onSucesss de findUserBY*/
@@ -119,6 +120,11 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
                 }) /**fin del findUserById*/
 
 
+              /**solo ejecuta una acción específica desde
+               * un thread que estés ejecutando sobre
+               * una view (un componente, ya sea TextView u otro)
+               * del hilo principal, es decir,
+               * un componente de tu app.*/
                 this@TraderActivity.runOnUiThread {
                     cryptosAdapter.cryptoList = resultCryptoList!!
                     cryptosAdapter.notifyDataSetChanged()
@@ -167,25 +173,57 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
         })
 
     }
-
+/**Se encarga de cargar los elemento de la lista en el panel*/
     private fun loadUserCryptos() {
+    /**runOnUiThread solo ejecuta una acción específica desde
+     * un thread que estés ejecutando sobre
+     * una view (un componente, ya sea TextView u otro)
+     * del hilo principal, es decir,
+     * un componente de tu app.*/
+
         runOnUiThread {
+                 /**Que el usaurio no sea null*/
+                                /**Que el usuario tenga un Lista de Criptos no nulla*/
             if (user != null && user!!.cryptosList != null) {
-                infoPanel.removeAllViews()
+                          /**Borra todas las vistas que tiene*/
+                infoPanel.removeAllViews()  /**PAnel donde se mostraran las monedas que
+                                               posee el usuario */
+
+                 /**mediante un for vamos a recorrer las monedas que tiene el
+                  * usuario y las vamos a ir pasANDO al metodo
+                  * encargado de pintar tales elementos*/
                 for (crypto in user!!.cryptosList!!) {
-                    addUserCryptoInfoRow(crypto)
+                    addUserCryptoInfoRow(crypto) /**Recibe un objeto Crypto()*/
                 }
             }
 
         }
     }
 
+
+/**Se encarga de agregar al panel del usuario
+ *  la Crypto() que recibe como parametro*/
     private fun addUserCryptoInfoRow(crypto: Crypto) {
+                                              /**Significa esta actividad*/
+                                                                    /**El recurso seria*/
+                                                                                       /**Indico donde lo vamos a agregar*/
         val view = LayoutInflater.from(this).inflate(R.layout.coin_info, infoPanel, false)
-        view.findViewById<TextView>(R.id.coinLabel).text =
-            getString(R.string.coin_info, crypto.name, crypto.available.toString())
+       /**Actualizar los valores*/
+                        /**Pinta el nombre de la Crypto*/
+       view.findViewById<TextView>(R.id.coinLabel).text =
+                        getString(R.string.coin_info,  /**Continee los valores a reemplazar*/
+                                  crypto.name,                 /**Valor 1*/
+                                  crypto.available.toString()) /**Valor 2*/
+                       /**Pinta la imagen de acuerdo a la url
+                        * que se le paso*/
+
+        /**Para la imagen*/
+                      /**Fuente de la imagen*/
+                                            /**Target de la imagen*/
         Picasso.get().load(crypto.imageUrl).into(view.findViewById<ImageView>(R.id.coinIcon))
-        infoPanel.addView(view)
+
+        /**Agregar la vista al contenedor*/
+       infoPanel.addView(view)
     }
 
     private fun configureRecyclerView() {
