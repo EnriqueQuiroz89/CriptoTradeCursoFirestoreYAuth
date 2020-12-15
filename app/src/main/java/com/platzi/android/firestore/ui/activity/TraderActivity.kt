@@ -32,7 +32,7 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
 
     private val cryptosAdapter: CryptosAdapter = CryptosAdapter(this)
 
-    private var username: String? = null
+    private var username: String? = null /**? <- le indicamos que puede tomar valor nulo*/
 
     private var user: User? = null
 
@@ -42,7 +42,9 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
         setContentView(R.layout.activity_trader)
         firestoreService = FirestoreService(FirebaseFirestore.getInstance())
 
+        /**Inicializacomos y recuperamos el valor que viene de la actividad login*/
         username = intent.extras!![USERNAME_KEY]!!.toString()
+        /**El nombre recuperado de la actividad anterior lo mostramos en esta actividad en un TextView*/
         usernameTextView.text = username
 
         configureRecyclerView()
@@ -64,48 +66,67 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
         }
     }
 
-    /***/
+    /**Este metodo carga las cripto monedas invocando al metodo que las descerializa y devuleve una lista de criptos*/
+      private fun loadCryptos() {
+          /**Invoca al metodo que obtiene las monedas de la coleccion mediante un callback*/
+          firestoreService.getCryptos(object : Callback<List<Crypto>> {    /**Puede devolver una List<Crypto> o una excepcion*/
 
-    private fun loadCryptos() {
-        firestoreService.getCryptos(object : Callback<List<Crypto>> {
-            override fun onSuccess(cryptoList: List<Crypto>?) {
+            override fun onSuccess(resultCryptoList: List<Crypto>?) {  /**Si devuelve una List<Crypto> la ocupa como parametro*/
+                                                                  /**Y ahi la guarda en standby*/
 
-                firestoreService.findUserById(username!!, object : Callback<User> {
-                    override fun onSuccess(result: User?) {
-                        user = result
-                        if (user!!.cryptosList == null) {
-                            val userCryptoList = mutableListOf<Crypto>()
+              /**Usa el metodo para obtener al documento usuario en formato User() mediante el username que es el id*/
+              firestoreService.findUserById(username!!, object : Callback<User> {
+                    override fun onSuccess(result: User?) {  /**Si exito ocupa el User? devuelto en forma de result */
+                        user = result  /**Asigna el result a una variable de clase user */
 
-                            for (crypto in cryptoList!!) {
+                        if (user!!.cryptosList == null) {    /**Si la lista de monedas del usuario esta vacia*/
+                            /**Crea una cartea vacia de cryptomonedas*/
+                             val userCryptoList = mutableListOf<Crypto>()
+
+                            /**Mediante una for se recorre la coleccion de Criptos que retorno el callback de getCryptos
+                             * y se agrega en cada iteracion una moneda a la lista  */
+                            for (crypto in resultCryptoList!!) { /***/
+                               /***Crea un objeto Crypto para asignarle las propiedades
+                                * de una criptomoneda ya existente*/
                                 val cryptoUser = Crypto()
+                                /**Agrega sus propiedades*/
                                 cryptoUser.name = crypto.name
-                                cryptoUser.available = crypto.available
+                                cryptoUser.available = crypto.available.toInt()
                                 cryptoUser.imageUrl = crypto.imageUrl
+                               /**Una vez armado el objeto lo agrega a la cartera vacia
+                                * que aun no ha sido asigna al usuario */
                                 userCryptoList.add(cryptoUser)
-                            }
+                            }   /**Al terminar el for significa que yaa no hay monedas por agregar*/
+                            /**Asigna la cartera recien llenada a la cartera vacia del Usuario */
                             user!!.cryptosList = userCryptoList
+
+                            /**Actualiza al usuario pasando como parametro el User() al que
+                             * recien se le asigno una cartera llena*/
                             firestoreService.updateUser(user!!, null)
+                            /**Enviamos un usuario y nos devuleve el usuario actualizado*/
                         }
+                        /**Lo anterior solo sirvio para crear carteras nuevas a usuarios nuevos
+                         * Pero este metodo carga todas las carteras nuevas y no nuevas*/
                         loadUserCryptos()
-                        addRealtimeDatabaseListeners(user!!, cryptoList!!)
+                        addRealtimeDatabaseListeners(user!!, resultCryptoList!!)
 
-                    }
+                    }   /**Fin del onSucesss de findUserBY*/
 
-                    override fun onFailed(exception: Exception) {
+                    override fun onFailed(exception: Exception) { /**Esto hara si falla el findUserBY */
                         showGeneralServerErrorMessage()
                     }
 
-                })
+                }) /**fin del findUserById*/
 
 
                 this@TraderActivity.runOnUiThread {
-                    cryptosAdapter.cryptoList = cryptoList!!
+                    cryptosAdapter.cryptoList = resultCryptoList!!
                     cryptosAdapter.notifyDataSetChanged()
                                                   }
 
-                                             } /**Fin del on success*/
+                                             } /**Fin del onSucess del getCryptos*/
 
-            override fun onFailed(exception: Exception) {
+            override fun onFailed(exception: Exception) {   /**Esto se hara si falla getCryptos */
                 Log.e("TraderActivity", "error loading criptos", exception)
                 showGeneralServerErrorMessage()
             }

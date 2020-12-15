@@ -10,8 +10,8 @@ package com.platzi.android.firestore.model
                                                                /**Disponibilidad de unidades*/
 class Crypto(var name: String = "",
              var imageUrl: String = "",
-            // var available: Int = 0) {
-             var available: String = "") {
+             var available: Int = 0) {
+          //   var available: String = "") {
     //convierte el nombre de la moneda a minusculas
     // el id de un docuemnto es el nombre de la moneda
     fun getDocumentId(): String {

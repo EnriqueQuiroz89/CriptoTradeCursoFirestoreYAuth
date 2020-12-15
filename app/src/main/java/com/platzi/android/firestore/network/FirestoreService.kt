@@ -59,17 +59,18 @@ class FirestoreService(val firebaseFirestore: FirebaseFirestore) {
     fun getCryptos(callback: Callback<List<Crypto>>?) {
         firebaseFirestore.collection(CRYPTO_COLLECTION_NAME)
             .get() /**Este metodo es para lectura directo y no en tiempo real*/
-            .addOnSuccessListener { result ->  /**El metodo arrojaria un resultado que es la lista*/
+            .addOnSuccessListener { result ->  /**se implementa para deserializar el objeto result*/
+                /**al iterar documentos en result se entiende que result es una lista de documentos*/
                 for (document in result) { /**Con este for se asume que es una lista de objetos*/
-                  /**En cada iteracion va mapeando el resultado a una lista
-                   * de objetos de tipo Crypto*/
+                 /**No entiendo por que en el mismo ciclo se puede llenar la lista*/
+
+               /**Aqui se covierte el objeto result a un  List<Crypto!>*/
                     val cryptoList = result.toObjects(Crypto::class.java)
-                    callback!!.onSuccess(cryptoList) /**SI el callback detecta operecion exitosa
-                                                        este metodo devolvera la lista mediante
-                                                        el callback*/
+                    callback!!.onSuccess(cryptoList) /**Aqui el callback devuleve la lista compuesta*/
+
                     break /**Se interrupme la ejecucion*/
                 }
-            }
+            }  /**Fin del addOnSuccessListener*/
             .addOnFailureListener { exception -> callback!!.onFailed(exception) }
     }
      /**Encuentra a los usuarios por ID*/
