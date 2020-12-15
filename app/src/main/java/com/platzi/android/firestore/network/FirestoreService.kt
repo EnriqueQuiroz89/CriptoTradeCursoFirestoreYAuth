@@ -94,28 +94,50 @@ class FirestoreService(val firebaseFirestore: FirebaseFirestore) {
             .addOnFailureListener { exception -> callback.onFailed(exception) }
     }
 
+         /**Escucharan los cambios que haya en las colleciones de CRyptos y Users*/
+                        /**Recibe una lista de cryptos*/
+                                                /**Instancia una interfaz */
     fun listenForUpdates(cryptos: List<Crypto>, listener: RealtimeDataListener<Crypto>) {
-        val cryptoReference = firebaseFirestore.collection(CRYPTO_COLLECTION_NAME)
+             /**Obtener referencia a la coleccion de criptomonedas*/
+              val cryptoReference = firebaseFirestore.collection(CRYPTO_COLLECTION_NAME)
+           /**Iterar la lista que se recibe por parametros*/
         for (crypto in cryptos) {
-            cryptoReference.document(crypto.getDocumentId()).addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    listener.onError(e)
-                }
-                if (snapshot != null && snapshot.exists()) {
+                    /**Dentro de la coleccion crearemos para cada elemento un listener*/
+            cryptoReference.document(crypto.getDocumentId()) /**Le indica que a la cripto actual*/
+                          /**Requiere dos parametros*/
+                                                 /**instancia de la dataa*/
+                                                           /**Error que ocurra en el servidor*/
+                           .addSnapshotListener { snapshot, e ->  /**Le agregue un suscriptor*/
+                                                                 /**a cambios en este nodo*/
+                     if (e != null) { /**Si hay error devolbvemos al listener el error*/
+                         listener.onError(e)
+                                    }
+                               /**Si no hay error*/
+                if (snapshot != null && snapshot.exists()) {  /**Verificamos que el snapshot no sea nulo
+                                                                  y en segunda que contenga datos*/
+                             /**Propagar estos datos a traves del listener*/
+                                          /**conevertimos el data al modelo que queremos*/
                     listener.onDataChange(snapshot.toObject(Crypto::class.java)!!)
                 }
             }
         }
     }
 
+         /**Monitorea cambios en los usuarios*/
     fun listenForUpdates(user: User, listener: RealtimeDataListener<User>) {
+             /**Referencia a la coleccion de usuarios*/
         val usersReference = firebaseFirestore.collection(USERS_COLLECTION_NAME)
-
+        /**A la constante de la coleeccion*/
+                                /**Le vamos a enviar el id del documento*/
+                                              /**Agregamos el Snapshot listener a tal documento*/
+                                                                    /**el snapshot y la excepcion*/
         usersReference.document(user.username).addSnapshotListener { snapshot, e ->
-            if (e != null) {
+            if (e != null) { /**SI hay error lo pasa al listener*/
                 listener.onError(e)
             }
+            /**Si no hay error */
             if (snapshot != null && snapshot.exists()) {
+                /**Ahora envio al lister el data CATSEADO en forma de User */
                 listener.onDataChange(snapshot.toObject(User::class.java)!!)
             }
         }

@@ -46,9 +46,11 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
         username = intent.extras!![USERNAME_KEY]!!.toString()
         /**El nombre recuperado de la actividad anterior lo mostramos en esta actividad en un TextView*/
         usernameTextView.text = username
-
+        /**Ordena los elemento en pantalla*/
         configureRecyclerView()
+        /**Carga las cripto del usuario encontrado*/
         loadCryptos()
+        /**Habilita la funcion del boton fab*/
         fab.setOnClickListener { view ->
             Snackbar.make(view, getString(R.string.generating_new_cryptos), Snackbar.LENGTH_SHORT)
                 .setAction("Info", null).show()
@@ -98,26 +100,22 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
                             }   /**Al terminar el for significa que yaa no hay monedas por agregar*/
                             /**Asigna la cartera recien llenada a la cartera vacia del Usuario */
                             user!!.cryptosList = userCryptoList
-
                             /**Finalmente actualizamos la data al servidor de la siguiente forma*/
                             firestoreService.updateUser(user!!, null)   //No voy a hacer nada cuando esta oeracion termine
                             /**Enviamos un usuario y nos devuleve el usuario actualizado*/
                         }
                         /**Lo anterior solo sirvio para crear carteras nuevas a usuarios nuevos*/
-
                         loadUserCryptos()  /*** Este metddo carga la lista al panel de informacion */
 
 
+                        /***NO REACCIONA CUANDO HAGO CLICK EN buy*/
                         addRealtimeDatabaseListeners(user!!, resultCryptoList!!)
 
                     }   /**Fin del onSucesss de findUserBY*/
 
                     override fun onFailed(exception: Exception) { /**Esto hara si falla el findUserBY */
-                        showGeneralServerErrorMessage()
-                    }
-
-                }) /**fin del findUserById*/
-
+                        showGeneralServerErrorMessage()         }
+                                              }) /**fin del findUserById*/
 
               /**solo ejecuta una acción específica desde
                * un thread que estés ejecutando sobre
@@ -125,11 +123,12 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
                * del hilo principal, es decir,
                * un componente de tu app.*/
                 this@TraderActivity.runOnUiThread {
-                    cryptosAdapter.cryptoList = resultCryptoList!!
-                    cryptosAdapter.notifyDataSetChanged()
+                    cryptosAdapter.cryptoList = resultCryptoList!! /**Esto es una lista*/
+                    cryptosAdapter.notifyDataSetChanged()          /**Esto es un metodo a un obejto*/
+
                                                   }
 
-                                             } /**Fin del onSucess del getCryptos*/
+                                              } /**Fin del onSucess del getCryptos*/
 
             override fun onFailed(exception: Exception) {   /**Esto se hara si falla getCryptos */
                 Log.e("TraderActivity", "error loading criptos", exception)
@@ -139,31 +138,47 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
         })
     }
 
+
+    /**Aqui se implementan los dos listener para dar la sensacion de tiempo real */
     private fun addRealtimeDatabaseListeners(user: User, cryptosList: List<Crypto>) {
 
+                                          /**usuario actual*/
+                                               /**Recibe como parametro un User*/
         firestoreService.listenForUpdates(user, object : RealtimeDataListener<User> {
             override fun onDataChange(updatedData: User) {
+                /**Si hay exito vamos a actualizar a este usuario*
+                 * con el objeto que nos devolvio el listener */
+                            /**Variable local*/
                 this@TraderActivity.user = updatedData
+             /**Vamos a cargar nuevamente la lista de monedas del User*/
                 loadUserCryptos()
             }
-
+               /**En caso de falla marca error general*/
             override fun onError(exception: Exception) {
                 showGeneralServerErrorMessage()
-            }
+                                                       }
+                                                             }) /**Fin listenForUpdates en User*/
 
-        })
 
+        /**Esto es para la lista de cripto monedas*/
         firestoreService.listenForUpdates(cryptosList, object : RealtimeDataListener<Crypto> {
             override fun onDataChange(updatedData: Crypto) {
-                var pos = 0
-                for (crypto in cryptosAdapter.cryptoList) {
-                    if (crypto.name.equals(updatedData.name)) {
+                var pos = 0  /**Hace referencia a la posicion del la cripto en el arreglo*/
+                for (crypto in cryptosAdapter.cryptoList) {  /**Creo*/
+                    /**Compara*/
+                              /**Nombre de la moneda de la iteracion*/
+                                            /**Con el nombre de la que se quiere modificar*/
+                     if (crypto.name.equals(updatedData.name)) {
+                         /**Actualizamos la cantidad disponible en pantalla
+                                           * Le asignamos la cantidad que viene del servidor */
                         crypto.available = updatedData.available
-                        cryptosAdapter.notifyItemChanged(pos)
-                    }
-                    pos++
-                }
-            }
+                          /**Le decimos al adaptador que actualizce el
+                          * item para la posicion indicada*/
+                        cryptosAdapter.notifyItemChanged(pos)  }
+                    /**Aumentar la posicion para que el contador valla en aumento*/
+                          pos++
+                                                     }  /**DFin del for*/
+                            } /**Fin del dataOnChange*/
 
             override fun onError(exception: Exception) {
                 showGeneralServerErrorMessage()
@@ -238,21 +253,28 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
             .setAction("Info", null).show()
     }
 
-    /***Esta funcion es matematica y no se puede hacer si available es string
+    /**Sobreescribe un metodo abstracto de la clase */
     override fun onBuyCryptoClicked(crypto: Crypto) {
+
+      /**Verificar que la criptomineda tenga un saldo suficiente*/
         if (crypto.available > 0) {
+            /**Busca la criptomoneda sobre la que se hizo clic
+             * entre las que tiene el usuario*/
             for (userCrypto in user!!.cryptosList!!) {
-                if (userCrypto.name == crypto.name) {
-                    userCrypto.available += 1
-                    break
+                if (userCrypto.name == crypto.name) { /**Si la encuentra*/
+                    userCrypto.available += 1      /**Agrega una unidad a la criptomoneda del usuario*/
+                    break  /**Luego de encontrarla para el ciclo*/
                 }
             }
-            crypto.available--
+            crypto.available-- /**Y del banco de criptomonedas
+                                  descontamos la misma unidad
+                                  que compro el usuario*/
 
+            /** Posteriormente actualizamos en el Server de Firestore*/
             firestoreService.updateUser(user!!, null)
             firestoreService.updateCrypto(crypto)
         }
-    } */
+    }
 
 
 }

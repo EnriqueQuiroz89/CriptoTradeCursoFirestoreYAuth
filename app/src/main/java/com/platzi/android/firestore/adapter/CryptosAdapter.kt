@@ -26,7 +26,7 @@ class CryptosAdapter(val cryptosAdapterListener: CryptosAdapterListener) :
         val view = LayoutInflater.from(parent.context)
                           .inflate(R.layout.crypto_row,
                                    parent,
-                                false) /**Para no agregarlo a la raiza*/
+                                false) /**Para no agregarlo a la raiz*/
         return ViewHolder(view)
     }
 
@@ -40,13 +40,9 @@ class CryptosAdapter(val cryptosAdapterListener: CryptosAdapterListener) :
         Picasso.get().load(crypto.imageUrl).into(holder.image)
         holder.name.text = crypto.name
         holder.available.text = holder.itemView.context.getString(R.string.available_message, crypto.available.toString())
-        //holder.available.text = "10"
         holder.buyButton.setOnClickListener {
-
-            /*** Se ejecuta cuando el boton comprar es presionado
-            cryptosAdapterListener.onBuyCryptoClicked(crypto)
-            */
-        }
+                 cryptosAdapterListener.onBuyCryptoClicked(crypto)
+                                            }
 
     }
 

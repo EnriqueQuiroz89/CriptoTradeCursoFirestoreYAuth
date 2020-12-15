@@ -10,5 +10,5 @@ import com.platzi.android.firestore.model.Crypto
 interface CryptosAdapterListener{
     /**La funcion recibira el objeto crypto sobre el cual se hizo click*/
  // se comento el metodo abstracto
-    // fun onBuyCryptoClicked(crypto: Crypto)
+     fun onBuyCryptoClicked(crypto: Crypto)
 }
