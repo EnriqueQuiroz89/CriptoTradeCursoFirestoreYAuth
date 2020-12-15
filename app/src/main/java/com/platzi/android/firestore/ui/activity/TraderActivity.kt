@@ -64,6 +64,8 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
         }
     }
 
+    /***/
+
     private fun loadCryptos() {
         firestoreService.getCryptos(object : Callback<List<Crypto>> {
             override fun onSuccess(cryptoList: List<Crypto>?) {
@@ -178,6 +180,7 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
             .setAction("Info", null).show()
     }
 
+    /***Esta funcion es matematica y no se puede hacer si available es string
     override fun onBuyCryptoClicked(crypto: Crypto) {
         if (crypto.available > 0) {
             for (userCrypto in user!!.cryptosList!!) {
@@ -191,5 +194,7 @@ class TraderActivity : AppCompatActivity(), CryptosAdapterListener {
             firestoreService.updateUser(user!!, null)
             firestoreService.updateCrypto(crypto)
         }
-    }
+    } */
+
+
 }

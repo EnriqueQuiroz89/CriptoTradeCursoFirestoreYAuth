@@ -177,6 +177,7 @@ class LoginActivity : AppCompatActivity() {
     }*/
 
 
+
     /**Es llamado cuando el usuario no se pudo agregar a la coleccion de usuarios*/
     private fun showErrorMessage(view: View) {
        /**El snackbar necesita una vista por que requiere saber donde se va a mostrar*/

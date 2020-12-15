@@ -43,7 +43,9 @@ class CryptosAdapter(val cryptosAdapterListener: CryptosAdapterListener) :
         //holder.available.text = "10"
         holder.buyButton.setOnClickListener {
 
+            /*** Se ejecuta cuando el boton comprar es presionado
             cryptosAdapterListener.onBuyCryptoClicked(crypto)
+            */
         }
 
     }
